@@ -7,3 +7,4 @@ python-jose[cryptography]
 python-dotenv
 uvicorn
 python-multipart
+psycopg2-binary
