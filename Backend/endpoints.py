@@ -126,6 +126,34 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
     print(f"User: {user.email}, Role: {user.role}")
     return user
 
+@router.post("/setup/create-first-admin")
+def create_first_admin(secret_code: str, db: Session = Depends(get_db)):
+    """
+    Creates the very first admin user. This is a one-time setup endpoint.
+    It is protected by a secret code set in the environment variables.
+    """
+    admin_secret = os.getenv("ADMIN_CREATION_SECRET")
+
+    if not admin_secret or secret_code != admin_secret:
+        raise HTTPException(status_code=403, detail="Not authorized")
+
+    if db.query(models.User).filter(models.User.role == models.roleEnum.ADMIN).first():
+        raise HTTPException(status_code=400, detail="An admin user already exists.")
+
+    print("Creating the first admin user...")
+    hashed_password = pwd_context.hash("admin123")
+    admin_user = models.User(
+        name="Admin User",
+        email="admin@example.com",
+        role=models.roleEnum.ADMIN,
+        password=hashed_password
+    )
+    db.add(admin_user)
+    db.commit()
+    
+    print("First admin user created successfully.")
+    return {"message": "Admin user created successfully."}
+
 @router.delete("/users/{user_id}")
 def delete_user(user_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
     if current_user.role not in [models.roleEnum.ADMIN]:
@@ -313,7 +341,3 @@ def get_user_courses(user_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="No Courses Found for this User")
     
     return courses
-
-
-
-  
