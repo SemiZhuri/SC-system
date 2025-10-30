@@ -5,6 +5,7 @@ A full-stack web application that allows administrators, teachers, and students 
 This project is designed to demonstrate clean architecture, RESTful API design, authentication with JWT, and role-based access control — built to simulate a small educational management system.
 
 Check live demo: https://sc-system1.vercel.app/homepage
+Note: The backend might take a couple minutes until it starts, due to free usage.
 
 ---
 
@@ -104,6 +105,8 @@ Create analytics dashboard for teachers
 Containerize with Docker for easier deployment
 
 Advance front error handeling
+
+Update the design to be responsive
 
 🤝 Contributing
 
